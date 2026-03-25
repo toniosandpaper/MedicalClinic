@@ -1,0 +1,35 @@
+<!-- Department Appointment Report
+
+SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS "Appointments"
+FROM department AS D, appointment AS A, employee as E
+WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=min AND A.Appointment<=max
+GROUP BY E.EmployeeID
+ORDER BY "Appointments";
+
+
+-->
+<script>
+const [rep,setRep] = useState({
+    DepartmentName: "",
+    min: "",
+    max: ""
+})
+
+const change = (e) =>{
+    setRep(prev=>({...prev, [e.target.name]:e.target.value}));
+}
+//const nav = UseNavigate();
+const submit = async e =>{
+    e.preventDefault()
+    await router.post("/addemp", emp)
+
+}
+</script>
+<div>
+    <h1>Department Appointment Report</h1>
+    Insert Department, Minimum and Maximum Range for the Dates
+    Department:<input type="text" placeholder="Department" onchange={change} name="DepartmentName">
+    Minimum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="min">
+    Maximum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="max">
+    <button onClick={submit}>Start</button>
+</div>

@@ -1,15 +1,80 @@
+<script>
+const [emp,setEmp] = useState({
+    FirstName: "",
+    LastName: "",
+    Birthdate: "",
+    GenderCode: null,
+    RaceCode: null,
+    EthnicCode: null,
+    Role: "",
+    Address: "",
+    PhoneNumber: "",
+    Email: "",
+    Password: "",
+    Department: "",
+    gender: "",
+    race: "",
+    ethnic: ""
+})
+
+const change = (e) =>{
+    setEmp(prev=>({...prev, [e.target.name]:e.target.value}));
+}
+//const nav = UseNavigate();
+const submit = async e =>{
+    e.preventDefault()
+    emp.GenderCode = res.json("SELECT GenderCode FROM gender WHERE GenderText="+emp.gender)
+    emp.RaceCode = res.json("SELECT RaceCode FROM race WHERE RaceText="+emp.race)
+    emp.GenderCode = res.json("SELECT EthnicityCode FROM ethnicity WHERE EthnicityText="+emp.ethnic)
+    await router.post("/addemp", emp)
+    await router.get("/admin/home");
+}
+</script>
 <div ClassName="Employee Form">
+    <a href="/admin/home"><button>Back</button></a>
     <h1>Add New Employee</h1>
-    <input type="text" placeholder="First Name" />
-    <input type="text" placeholder="Last Name" />
-    <input type="text" placeholder="Birth Date" />
-    <input type="text" placeholder="Gender" />
-    <input type="text" placeholder="Race" />
-    <input type="text" placeholder="Ethnicity" />
-    <input type="text" placeholder="Role" />
-    <input type="text" placeholder="Address" />
-    <input type="text" placeholder="Phone Number" />
-    <input type="text" placeholder="Email" />
-    <input type="text" placeholder="Password" />
-    <input type="text" placeholder="Department" />
+    
+    <input type="text" placeholder="First Name" onChange={change} name="FirstName"/>
+    <input type="text" placeholder="Last Name" onChange={change} name="LastName"/>
+    Birth Date:<input type="date" placeholder="YYYY-MM-DD" onChange={change} name="Birthdate"/>
+    <!-- Gender:<input type="text" placeholder="Gender" onChange={change} name="gender"/>
+    Race:<input type="text" placeholder="Race" onChange={change} name="race"/>
+    Ethnicity:<input type="text" placeholder="Ethnicity" onChange={change} name="ethnic"/>
+    Role:<input type="text" placeholder="Role" onChange={change} name="Role"/> -->
+    <br><label for="gender">Gender:</label>
+    <select name="gender" id="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Non-Binary">Non-Binary</option>
+        <option value="Other">Other</option>
+    </select>
+    <label for="race">Race:</label>
+    <select name="race" id="race">
+        <option value="White">White</option>
+        <option value="Asian">Asian</option>
+        <option value="Black">Black</option>
+        <option value="Pacific Islander">Pacific Islander</option>
+        <option value="Other">Other</option>
+    </select>
+    <label for="ethnic">Ethnicity:</label>
+    <select name="ethnic" id="ethnic">
+        <option value="European-American">European-American</option>
+        <option value="Hispanic/Latino">Hispanic/Latino</option>
+        <option value="Asian-American">Asian-American</option>
+        <option value="African-American">African-American</option>
+        <option value="Other">Other</option>
+    </select>
+    <br><label for="Role">Role:</label>
+    <select name="Role" id="Role">
+        <option value="Admin">Admin</option>
+        <option value="Doctor">Doctor</option>
+        <option value="Nurse">Nurse</option>
+        <option value="Receptionist">Receptionist</option>
+    </select>&#9;
+    Department:<input type="text" placeholder="Department" onChange={change} name="Department"/>
+    <br>Address:<input type="text" placeholder="Address" onChange={change} name="Address"/>
+    Phone Number:<input type="text" placeholder="000000000" onChange={change} name="PhoneNumber"/>
+    <br>Email:<input type="text" placeholder="Email" onChange={change} name="Email"/>
+    Password:<input type="text" placeholder="Password" onChange={change} name="Password"/>
+    <button onClick={submit}>Add Employee</button>
 </div>

@@ -1,0 +1,19 @@
+<!-- General Appointment Report
+ 
+SELECT D.DepartmentName,COUNT(A.AppointmentID) AS "Appointments" 
+    FROM department AS D,appointment AS A,office AS O
+    WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= min AND A.AppointmentDate <= max
+    GROUP BY D.DepartmentName
+    ORDER BY "Appointments";
+
+
+-->
+<script>
+
+</script>
+<div>
+    <h1>General Appointment Report</h1>
+    Insert Minimum and Maximum Range for the Dates
+    Minimum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="min">
+    Maximum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="max">
+</div>
