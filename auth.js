@@ -1,10 +1,12 @@
 const db = require("./db");
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken')
 
 const register = async (req, res) => {
   try {
     const query = `SELECT * FROM patient where email = '${req.body.Email}'`;
     const [data] = await db.query(query)
+
 
     if (data.length) return res.status(409).json("User already exists!");
     const salt = bcrypt.genSaltSync(10);
@@ -33,5 +35,33 @@ const register = async (req, res) => {
 
 };
 
+const login = async (req, res) => {
+    try{
+        const query = `SELECT * FROM PATIENT WHERE Email = '${req.body.Email}'`
+        const [data] = await db.query(query)
+        if(data.length === 0) return res.status(404).json("User not found!")
 
-module.exports = { register };
+        const checkPassword = bcrypt.compareSync(req.body.Password,data[0].Password)
+
+        if(!checkPassword) return res.status(400).json("wrong password or username")
+        
+        const{Password, ...other} = data[0]
+
+        const token = jwt.sign({id:data[0].PatientID}, "secretkey",{expiresIn: "24h"})
+
+        res.cookie("accessToken", token, {
+            httpOnly: true,
+        }).status(200).json(other)
+    }catch(err){
+        res.status(500).json(err)
+        console.log(err)
+    }
+}
+const logout = (req, res) => {
+    res.clearCookie("accessToken",{
+        secure:true,
+        sameSite:"none"
+    }).status(200).json("User has been logged out!")
+}
+
+module.exports = { register, login, logout };

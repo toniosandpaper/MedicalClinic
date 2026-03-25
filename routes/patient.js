@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const {register} = require('../auth')
+const {register, login, logout} = require('../auth')
 
 
 router.get('/', async (req, res) => {
@@ -10,6 +10,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/register', register);
+router.post('/login', login)
+router.post('/logout', logout)
 
 // Booking - POST
 
