@@ -10,14 +10,20 @@
 </head>
 <body>
     <div class="navbar">
-        <div class="logo">Hello <%= name %></div>
+        <div class="logo">Hello <%= firstName %></div>
         <div class = "auth">
-            <div class="register"> 
-                <button class = "nav-btn"> <a href = "/register">Register</a></button>
-            </div>
-            <div class="login">
-                <button class = "nav-btn">Login</button>
-            </div>
+            <% if (isLoggedIn) { %>
+                <a href="/patient/logout">
+                    <button class="nav-btn">Log Out</button>
+                </a>
+            <% } else { %>
+                <a href="/login">
+                    <button class="nav-btn">Log In</button>
+                </a>
+                <a href="/register">
+                    <button class="nav-btn">Register</button>
+                </a>
+            <% } %>
         </div>
     </div>
 
