@@ -30,7 +30,7 @@ const submit = async e =>{
 <div>
     <h1>Department Appointment Report</h1>
     Insert Department, Minimum and Maximum Range for the Dates
-    <form action='/pulldar' method="post">
+    <form action="/admin/pulldar" method="post">
     <label>Department:<input type="text" placeholder="Department" name="DepartmentName" value="<%= locals.DepartmentName %>" required></label>
     <label>Minimum:<input type="date" placeholder="YYYY-MM-DD" name="min" value="<%= locals.min %>" required></label>
     <label>Maximum:<input type="date" placeholder="YYYY-MM-DD" name="max" value="<%= locals.max %>" required></label>

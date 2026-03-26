@@ -35,15 +35,24 @@ router.get('/', async (req, res ) =>{
     const [rows] = await db.query("SELECT * FROM employee WHERE Role='Admin'")
     res.json(rows);
 });
-//Gets data for DAR Report
-router.post('/pulldar', async (req,res) =>{
-    const q = "SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=? AND A.Appointment<=? AND D.DepartmentName=? GROUP BY E.EmployeeID ORDER BY 'Appointments'";
-    const min = req.body.min;
-    const max = req.body.max;
-    const DepartmentName = req.body.DepartmentName;
+// Gets data for DAR Report
+router.post('/pulldar', async (req, res) => {
+    // 1. Corrected query (added 'Date' to AppointmentDate and added DESC)
+    const q = `
+        SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID = E.EmployeeID AND E.DepartmentID = D.DepartmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? AND D.DepartmentName = ? GROUP BY E.EmployeeID ORDER BY Appointments DESC`;
 
-    const [rows] = db.query(q,min,max,DepartmentName);
-    res.json(rows);
+    const { min, max, DepartmentName } = req.body;
+
+    try {
+        // 2. Wrap params in [brackets] and use await
+        const [rows] = await db.query(q, [min, max, DepartmentName]); 
+
+        // 3. Render the page instead of sending JSON
+        res.render('admin/repdar', { results: rows }); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Report Error");
+    }
 });
 //Gets data for GAR Report
 router.post('/pullgar', async (req,res) =>{
