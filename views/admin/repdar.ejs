@@ -1,39 +1,88 @@
-<!-- Department Appointment Report
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Department Appointment Report</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; }
+        input, button { padding: 8px; margin: 5px; }
+        button { background-color: #2e4d2e; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS "Appointments"
-FROM department AS D, appointment AS A, employee as E
-WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=min AND A.Appointment<=max
-GROUP BY E.EmployeeID
-ORDER BY "Appointments";
-
-
--->
-<script>
-/*
-const [rep,setRep] = useState({
-    DepartmentName: "",
-    min: "",
-    max: ""
-})
-
-const change = (e) =>{
-    setRep((prev)=>({...prev, [e.target.name]:e.target.value}));
-}
-console.log(rep);
-//const nav = UseNavigate();
-const submit = async e =>{
-    e.preventDefault()
-    const [rows] = await router.get("/pulldar", {min : rep.min},{max : rep.max},{DepartmentName : rep.DepartmentName})
-    res.json(rows)
-};*/
-</script>
-<div>
-    <h1>Department Appointment Report</h1>
-    Insert Department, Minimum and Maximum Range for the Dates
-    <form action="/admin/pulldar" method="post">
-    <label>Department:<input type="text" placeholder="Department" name="DepartmentName" value="<%= locals.DepartmentName %>" required></label>
-    <label>Minimum:<input type="date" placeholder="YYYY-MM-DD" name="min" value="<%= locals.min %>" required></label>
-    <label>Maximum:<input type="date" placeholder="YYYY-MM-DD" name="max" value="<%= locals.max %>" required></label>
-    <br><button type="submit">Start</button>
-    </form>
-</div>
+    <div class="form-section">
+        <h1>Department Appointment Report</h1>
+        <p>Insert Department, Minimum and Maximum Range for the Dates</p>
+        
+        <form action="/admin/pulldar" method="post">
+            <label>Department: 
+                <input type="text" name="DepartmentName" placeholder="e.g. General" required>
+            </label>
+            <label>Minimum: 
+                <input type="date" name="min" required>
+            </label>
+            <label>Maximum: 
+                <input type="date" name="max" required>
+            </label>
+            <button type="submit">Generate Report</button>
+        </form>
+        <hr>
+        <% if (locals.results && results.length > 0) { %>
+            <h2>Department Results</h2>
+            <table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Total Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% results.forEach(row => { %>
+                        <tr>
+                            <td><%= row.EmployeeID %></td>
+                            <td><%= row.FirstName %> <%= row.LastName %></td>
+                            <td><%= row.DepartmentName %></td>
+                            <td><%= row.Appointments %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else if (locals.results) { %>
+            <p>No appointments found for those dates.</p>
+        <% } %>
+    </div>
+    <hr>
+    <% if (locals.results && results.length > 0) { %>
+        <h2>Report Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Doctor Name</th>
+                    <th>Department</th>
+                    <th>Total Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% results.forEach(row => { %>
+                    <tr>
+                        <td><%= row.EmployeeID %></td>
+                        <td><%= row.FirstName %> <%= row.LastName %></td>
+                        <td><%= row.DepartmentName %></td>
+                        <td><%= row.Appointments %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else if (locals.results) { %>
+        <p><strong>No data found</strong> for those specific dates or department.</p>
+    <% } %>
+</body>
+</html>

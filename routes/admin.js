@@ -4,17 +4,41 @@ const db = require('../db');
 
 const id = 1;
 router.get('/profile', async (req, res) => {
-    /*const fir = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
-    const las = db.query("SELECT LastName FROM employee WHERE employeeID="+id);
-    const bd = db.query("SELECT Birthdate FROM employee WHERE employeeID="+id);
-    const gen = db.query("SELECT GenderText FROM employee,gender WHERE employeeID="+id+" AND employee.GenderCode=gender.GenderCode");
-    const rac = db.query("SELECT RaceText FROM employee,race WHERE employeeID="+id+" AND employee.RaceCode=race.RaceCode");
-    const eth = db.query("SELECT EthnicityText FROM employee,ethnicity WHERE employeeID="+id+" AND employee.EthnicityCode=ethnicity.EthnicityCode");
-    const addr = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
-    const pho = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
-    const dep = db.query("SELECT DepartmentName FROM employee,department WHERE employeeID="+id+" AND employee.DepartmentID=department.DepartmentID");
-    const rol = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);*/
-    res.render('admin/profile');//,{{First = fir},{Last = las},{Birth = bd},{Gender = gen},{Race = rac},{Ethnic = eth},{Address = addr},{Phone = pho},{Depart = dep},{Role = rol}});
+    const id = 1; // Keeping his hardcoded ID for now
+    
+    // One big query to join all the relevant tables
+    const q = `
+        SELECT 
+            E.FirstName AS First, 
+            E.LastName AS Last, 
+            E.Birthdate AS Birth, 
+            E.Role, 
+            E.Address, 
+            E.PhoneNumber AS Phone,
+            G.GenderText AS Gender, 
+            R.RaceText AS Race, 
+            ET.EthnicityText AS Ethnic, 
+            D.DepartmentName AS Depart
+        FROM employee E
+        LEFT JOIN gender G ON E.GenderCode = G.GenderCode
+        LEFT JOIN race R ON E.RaceCode = R.RaceCode
+        LEFT JOIN ethnicity ET ON E.EthnicityCode = ET.EthnicityCode
+        LEFT JOIN department D ON E.DepartmentID = D.DepartmentID
+        WHERE E.EmployeeID = ?`;
+
+    try {
+        const [rows] = await db.query(q, [id]);
+        
+        if (rows.length > 0) {
+            // We pass the FIRST row of data to the EJS template
+            res.render('admin/profile', rows[0]); 
+        } else {
+            res.status(404).send("Employee not found");
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error loading profile");
+    }
 });
 router.get('/home', async (req, res) => {
     res.render('admin/home');
@@ -35,23 +59,21 @@ router.get('/', async (req, res ) =>{
     const [rows] = await db.query("SELECT * FROM employee WHERE Role='Admin'")
     res.json(rows);
 });
-// Gets data for DAR Report
 router.post('/pulldar', async (req, res) => {
-    // 1. Corrected query (added 'Date' to AppointmentDate and added DESC)
-    const q = `
-        SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID = E.EmployeeID AND E.DepartmentID = D.DepartmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? AND D.DepartmentName = ? GROUP BY E.EmployeeID ORDER BY Appointments DESC`;
-
+    // 1. Correct the query (AppointmentDate)
+    const q = "SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=? AND A.AppointmentDate<=? AND D.DepartmentName=? GROUP BY E.EmployeeID ORDER BY Appointments DESC";
+    
     const { min, max, DepartmentName } = req.body;
 
     try {
-        // 2. Wrap params in [brackets] and use await
+        // 2. Add 'await' and use [brackets] for parameters
         const [rows] = await db.query(q, [min, max, DepartmentName]); 
 
-        // 3. Render the page instead of sending JSON
+        // 3. Change res.json to res.render to send data back to the page
         res.render('admin/repdar', { results: rows }); 
     } catch (err) {
         console.error(err);
-        res.status(500).send("Report Error");
+        res.status(500).send("Database Error");
     }
 });
 //Gets data for GAR Report

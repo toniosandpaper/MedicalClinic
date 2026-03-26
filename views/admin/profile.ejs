@@ -17,7 +17,7 @@ const Role = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
 //res.render('admin/profile',{First : fir,Last : las,Birth : bd,Gender : gen,Race : rac,Ethnic : eth,Address : addr,Phone : pho,Depart : dep,Role : rol });
 </script>
 <div>
-    <button><Link to="/admin/home">Home</Link></button>
+    <button><a href="/admin/home" style="text-decoration: none; color: black;">Home</a></button>
     <h1> Name: <%= First %> <%= Last %></h1>
     <h1>Role: <%= Role %></h1>
     <h1>Department: <%= Depart %></h1>
