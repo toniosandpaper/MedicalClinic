@@ -9,7 +9,7 @@ ORDER BY "Appointments";
 
 -->
 <script>
-    const [rep,setRep] = useState({
+    /*const [rep,setRep] = useState({
         min: "",
         max: ""
     })
@@ -22,11 +22,14 @@ ORDER BY "Appointments";
         e.preventDefault()
         const [rows] = await router.get("/pullgar", {min : rep.min},{max : rep.max})
 
-    }
+    }*/
 </script>
 <div>
     <h1>General Appointment Report</h1>
     Insert Minimum and Maximum Range for the Dates
-    Minimum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="min">
-    Maximum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="max">
+    <form action="/admin/pullgar" method="post">
+    <label>Minimum:<input type="date" placeholder="YYYY-MM-DD" name="min" value="<%= locals.min %>" required></label>
+    <label>Maximum:<input type="date" placeholder="YYYY-MM-DD" name="max" value="<%= locals.max %>" required></label>
+    <br><button type="submit">Start</button>
+    </form>
 </div>

@@ -28,7 +28,7 @@ router.get('/repgar', async (req, res) => {
 router.get('/repgrr', async (req, res) => {
     res.render('admin/repgrr');
 });
-router.get('/repdar', async (req, res) => {
+router.get('/repdar', async (req, res) => { //
     res.render('admin/repdar');
 });
 router.get('/', async (req, res ) =>{
@@ -36,17 +36,17 @@ router.get('/', async (req, res ) =>{
     res.json(rows);
 });
 //Gets data for DAR Report
-router.get('/pulldar', async (req,res) =>{
+router.post('/pulldar', async (req,res) =>{
     const q = "SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=? AND A.Appointment<=? AND D.DepartmentName=? GROUP BY E.EmployeeID ORDER BY 'Appointments'";
     const min = req.body.min;
     const max = req.body.max;
     const DepartmentName = req.body.DepartmentName;
 
     const [rows] = db.query(q,min,max,DepartmentName);
-    return rows;
+    res.json(rows);
 });
 //Gets data for GAR Report
-router.get('/pullgar', async (req,res) =>{
+router.post('/pullgar', async (req,res) =>{
     //const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= '${req.body.min}' AND A.AppointmentDate <= '${req.body.max}' GROUP BY D.DepartmentName ORDER BY 'Appointments'";
     const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentName ORDER BY 'Appointments'";
     const min = req.body.min;
@@ -57,13 +57,12 @@ router.get('/pullgar', async (req,res) =>{
     return rows;
 });
 //Gets data for GRR Report
-router.get('/pullgrr', async (req,res) =>{
-    const q = "SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=? AND A.Appointment<=? AND D.DepartmentName=? GROUP BY E.EmployeeID ORDER BY 'Appointments'";
+router.post('/pullgrr', async (req,res) =>{
+    const q = "SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS 'Revenue' FROM department AS D,appointment AS A,office AS O,transaction as T WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY 'Revenue'";
     const min = req.body.min;
     const max = req.body.max;
-    const DepartmentName = req.body.DepartmentName;
 
-    const [rows] = db.query(q,min,max,DepartmentName);
+    const [rows] = db.query(q,min,max);
     return rows;
 });
 
@@ -75,7 +74,7 @@ router.post("/adddoc", async (req,res) =>{
         req.body.IsPrimaryCare
     ];
     const query = await db.query(q,[r]);
-    res.json(query);
+    //res.json(query);
 });
 
 router.post("/addnur", async (req,res) =>{
@@ -85,7 +84,7 @@ router.post("/addnur", async (req,res) =>{
         req.body.ApprovedDoctorID
     ];
     const query = await db.query(q,[r]);
-    res.json(query);
+    //res.json(query);
 });
 
 // Creating and Employee - POST
@@ -107,7 +106,7 @@ router.post('/addemp', async (req, res) => {
         req.body.DepartmentID,
     ];
     const row = await db.query(q,[r]);
-    res.json(row);
+    //res.json(row);
 });
 
 module.exports = router;

@@ -9,6 +9,7 @@ ORDER BY "Appointments";
 
 -->
 <script>
+/*
 const [rep,setRep] = useState({
     DepartmentName: "",
     min: "",
@@ -16,20 +17,23 @@ const [rep,setRep] = useState({
 })
 
 const change = (e) =>{
-    setRep(prev=>({...prev, [e.target.name]:e.target.value}));
+    setRep((prev)=>({...prev, [e.target.name]:e.target.value}));
 }
+console.log(rep);
 //const nav = UseNavigate();
 const submit = async e =>{
     e.preventDefault()
     const [rows] = await router.get("/pulldar", {min : rep.min},{max : rep.max},{DepartmentName : rep.DepartmentName})
-    
-};
+    res.json(rows)
+};*/
 </script>
 <div>
     <h1>Department Appointment Report</h1>
     Insert Department, Minimum and Maximum Range for the Dates
-    Department:<input type="text" placeholder="Department" onchange={change} name="DepartmentName">
-    Minimum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="min">
-    Maximum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="max">
-    <button onClick={submit}>Start</button>
+    <form action='/pulldar' method="post">
+    <label>Department:<input type="text" placeholder="Department" name="DepartmentName" value="<%= locals.DepartmentName %>" required></label>
+    <label>Minimum:<input type="date" placeholder="YYYY-MM-DD" name="min" value="<%= locals.min %>" required></label>
+    <label>Maximum:<input type="date" placeholder="YYYY-MM-DD" name="max" value="<%= locals.max %>" required></label>
+    <br><button type="submit">Start</button>
+    </form>
 </div>

@@ -5,15 +5,15 @@ const db = require('../db');
 
 const id = 1;
 const First = "John";//res.json(db.query("SELECT FirstName FROM employee WHERE employeeID="+id));
-const Last = res.json(db.query("SELECT LastName FROM employee WHERE employeeID="+id));
-const Birth = res.json(db.query("SELECT Birthdate FROM employee WHERE employeeID="+id));
-const Gender = res.json(db.query("SELECT GenderText FROM employee,gender WHERE employeeID="+id+" AND employee.GenderCode=gender.GenderCode"));
-const Race = res.json(db.query("SELECT RaceText FROM employee,race WHERE employeeID="+id+" AND employee.RaceCode=race.RaceCode"));
-const Ethnic = res.json(db.query("SELECT EthnicityText FROM employee,ethnicity WHERE employeeID="+id+" AND employee.EthnicityCode=ethnicity.EthnicityCode"));
-const Address = res.json(db.query("SELECT FirstName FROM employee WHERE employeeID="+id));
-const Phone = res.json(db.query("SELECT FirstName FROM employee WHERE employeeID="+id));
-const Depart = res.json(db.query("SELECT DepartmentName FROM employee,department WHERE employeeID="+id+" AND employee.DepartmentID=department.DepartmentID"));
-const Role = res.json(db.query("SELECT FirstName FROM employee WHERE employeeID="+id));
+const Last = db.query("SELECT LastName FROM employee WHERE employeeID="+id);
+const Birth = db.query("SELECT Birthdate FROM employee WHERE employeeID="+id);
+const Gender = db.query("SELECT GenderText FROM employee,gender WHERE employeeID="+id+" AND employee.GenderCode=gender.GenderCode");
+const Race = db.query("SELECT RaceText FROM employee,race WHERE employeeID="+id+" AND employee.RaceCode=race.RaceCode");
+const Ethnic = db.query("SELECT EthnicityText FROM employee,ethnicity WHERE employeeID="+id+" AND employee.EthnicityCode=ethnicity.EthnicityCode");
+const Address = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
+const Phone = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
+const Depart = db.query("SELECT DepartmentName FROM employee,department WHERE employeeID="+id+" AND employee.DepartmentID=department.DepartmentID");
+const Role = db.query("SELECT FirstName FROM employee WHERE employeeID="+id);
 //res.render('admin/profile',{First : fir,Last : las,Birth : bd,Gender : gen,Race : rac,Ethnic : eth,Address : addr,Phone : pho,Depart : dep,Role : rol });
 </script>
 <div>
