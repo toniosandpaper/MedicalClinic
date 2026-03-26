@@ -36,34 +36,56 @@ router.get('/', async (req, res ) =>{
     res.json(rows);
 });
 //Gets data for DAR Report
-router.post('/pulldar', async (req,res) =>{
-    const q = "SELECT E.EmployeeID,E.FirstName,E.LastName,D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID=E.EmployeeID AND E.DepartmentID=D.DepartmentID AND A.AppointmentDate>=? AND A.Appointment<=? AND D.DepartmentName=? GROUP BY E.EmployeeID ORDER BY 'Appointments'";
-    const min = req.body.min;
-    const max = req.body.max;
-    const DepartmentName = req.body.DepartmentName;
-
-    const [rows] = db.query(q,min,max,DepartmentName);
-    res.json(rows);
+router.post('/pulldar', async (req, res) => {
+ 
+    const q = `
+        SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID = E.EmployeeID AND E.DepartmentID = D.DepartmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? AND D.DepartmentName = ? GROUP BY E.EmployeeID ORDER BY Appointments DESC`;
+ 
+    const { min, max, DepartmentName } = req.body;
+ 
+    try {
+ 
+        const [rows] = await db.query(q, [min, max, DepartmentName]);
+ 
+ 
+        res.render('admin/repdar', { results: rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Report Error");
+    }
 });
 //Gets data for GAR Report
 router.post('/pullgar', async (req,res) =>{
-    //const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= '${req.body.min}' AND A.AppointmentDate <= '${req.body.max}' GROUP BY D.DepartmentName ORDER BY 'Appointments'";
-    const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentName ORDER BY 'Appointments'";
-    const min = req.body.min;
-    const max = req.body.max;
+    const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentName ORDER BY Appointments DESC";
+    const {min, max} = req.body;
 
-    //const [rows] = db.query(q);
-    const [rows] = db.query(q,min,max);
-    return rows;
+    try {
+
+        const [rows] = await db.query(q,[min,max]);
+        res.render('admin/repdar', {results: rows});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Report Error");
+    }
 });
 //Gets data for GRR Report
 router.post('/pullgrr', async (req,res) =>{
-    const q = "SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS 'Revenue' FROM department AS D,appointment AS A,office AS O,transaction as T WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY 'Revenue'";
-    const min = req.body.min;
-    const max = req.body.max;
 
-    const [rows] = db.query(q,min,max);
-    return rows;
+    const q = `
+        SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS 'Revenue' FROM department AS D,appointment AS A,office AS O,transaction as T WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY Revenue DESC`;
+ 
+    const { min, max} = req.body;
+ 
+    try {
+ 
+        const [rows] = await db.query(q, [min, max]);
+ 
+ 
+        res.render('admin/repgrr', { results: rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Report Error");
+    }
 });
 
 router.post("/adddoc", async (req,res) =>{
