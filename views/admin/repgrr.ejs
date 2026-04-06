@@ -4,29 +4,87 @@ SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS "Revenue"
 FROM department AS D,appointment AS A,office AS O,transaction as T
 WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID 
 GROUP BY D.DepartmentID
-ORDER BY "Revenue";
+ORDER BY Revenue DESC;
 
 -->
-<script>
-    const [rep,setRep] = useState({
-    min: "",
-    max: ""
-})
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>General Revenue Report</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; }
+        input, button { padding: 8px; margin: 5px; }
+        button { background-color: #2e4d2e; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-const change = (e) =>{
-    setRep(prev=>({...prev, [e.target.name]:e.target.value}));
-}
-//const nav = UseNavigate();
-const submit = async e =>{
-    e.preventDefault()
-    const [rows] = await router.get("/pullgrr", {min : rep.min},{max : rep.max})
-
-}
-</script>
-<div>
-    <h1>General Appointment Report</h1>
-    Insert Minimum and Maximum Range for the Dates
-    Minimum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="min">
-    Maximum:<input type="date" placeholder="YYYY-MM-DD" onchange={change} name="max">
-    <br><button onClick={submit}>Start</button>
-</div>
+    <div class="form-section">
+        <h1>General Revenue Report</h1>
+        <p>Insert Minimum and Maximum Range for the Dates</p>
+        
+        <form action="/admin/pullgrr" method="post">
+            <label>Minimum: 
+                <input type="date" name="min" required>
+            </label>
+            <label>Maximum: 
+                <input type="date" name="max" required>
+            </label>
+            <button type="submit">Generate Report</button>
+        </form>
+        <hr>
+        <% if (locals.results && results.length > 0) { %>
+            <h2>Report Results</h2>
+            <table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th>Department</th>
+                        <th>Office</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% results.forEach(row => { %>
+                        <tr>
+                            <td><%= row.DepartmentName %></td>
+                            <td><%= row.OfficeName %></td>
+                            <td><%= row.Revenue %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else if (locals.results) { %>
+            <p>No revenue found for those dates.</p>
+        <% } %>
+    </div>
+    <hr>
+    <% if (locals.results && results.length > 0) { %>
+        <h2>Report Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Department</th>
+                    <th>Office</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% results.forEach(row => { %>
+                    <tr>
+                        <td><%= row.DepartmentName %></td>
+                        <td><%= row.OfficeName %></td>
+                        <td><%= row.Revenue %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else if (locals.results) { %>
+        <p><strong>No data found</strong> for those specific dates.</p>
+    <% } %>
+</body>
+</html>

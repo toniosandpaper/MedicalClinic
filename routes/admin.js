@@ -80,13 +80,13 @@ router.post('/pulldar', async (req, res) => {
 });
 //Gets data for GAR Report
 router.post('/pullgar', async (req,res) =>{
-    const q = "SELECT D.DepartmentName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,office AS O WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentName ORDER BY Appointments DESC";
+    const q = "SELECT D.DepartmentName,O.OfficeName,COUNT(A.AppointmentID) AS 'Appointments' FROM department AS D,appointment AS A,employee AS E,office AS O WHERE A.DoctorID=E.EmployeeID AND D.DepartmentID=E.DepartmentID AND D.OfficeID=O.OfficeID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY Appointments DESC";
     const {min, max} = req.body;
 
     try {
 
         const [rows] = await db.query(q,[min,max]);
-        res.render('admin/repdar', {results: rows});
+        res.render('admin/repgar', {results: rows});
     } catch (err) {
         console.error(err);
         res.status(500).send("Report Error");
@@ -96,8 +96,8 @@ router.post('/pullgar', async (req,res) =>{
 router.post('/pullgrr', async (req,res) =>{
 
     const q = `
-        SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS 'Revenue' FROM department AS D,appointment AS A,office AS O,transaction as T WHERE A.officeID=O.officeID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY Revenue DESC`;
- 
+        SELECT D.DepartmentName,O.OfficeName,SUM(T.Amount) AS 'Revenue' FROM department AS D,appointment AS A,employee AS E,transaction as T,office AS O WHERE A.DoctorID=E.EmployeeID AND D.DepartmentID=E.DepartmentID AND D.OfficeID=O.OfficeID AND T.AppointmentID=A.AppointmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? GROUP BY D.DepartmentID ORDER BY Revenue DESC`;
+
     const { min, max} = req.body;
  
     try {
@@ -119,7 +119,13 @@ router.post("/adddoc", async (req,res) =>{
         req.body.Specialty,
         req.body.IsPrimaryCare
     ];
-    const query = await db.query(q,[r]);
+    try {
+
+        const query = await db.query(q,[r]);
+    } catch(err) {
+        console.err(err);
+        res.status(500).send("Doctor Error");
+    }
     //res.json(query);
 });
 
@@ -129,7 +135,14 @@ router.post("/addnur", async (req,res) =>{
         req.body.EmployeeID,
         req.body.ApprovedDoctorID
     ];
-    const query = await db.query(q,[r]);
+
+    try {
+
+        const query = await db.query(q,[r]);
+    } catch(err) {
+        console.err(err);
+        res.status(500).send("Nurse Error");
+    }
     //res.json(query);
 });
 
@@ -151,7 +164,23 @@ router.post('/addemp', async (req, res) => {
         req.body.Password,
         req.body.DepartmentID,
     ];
+
+    
     const row = await db.query(q,[r]);
+
+    if (req.body.Role = "Doctor") {
+        const id = await db.query("SELECT EmployeeID FROM employee WHERE FirstName=?,LastName=?,Email=?,DepartmentID=?",req.body.FirstName,req.body.LastName,req.body.Email,req.body.DepartmentID);
+        const special = req.body.Specialty;
+        const pcp = req.body.IsPrimaryCare;
+
+        router.post('/adddoc',{EmployeeID : id,Specialty : special,IsPrimaryCare : pcp});
+    }
+    if (req.body.Role = "Nurse") {
+        const id = await db.query("SELECT EmployeeID FROM employee WHERE FirstName=?,LastName=?,Email=?,DepartmentID=?",req.body.FirstName,req.body.LastName,req.body.Email,req.body.DepartmentID);
+        const doc = req.body.ApprovedDoctorID;
+
+        router.post('/addnur',{EmployeeID : id,ApprovedDoctorID : doc});
+    }
     //res.json(row);
 });
 
