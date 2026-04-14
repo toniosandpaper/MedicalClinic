@@ -51,14 +51,14 @@ const login = async (req, res) => {
 
         res.cookie("accessToken", token, {
             httpOnly: true,
-        }).redirect("/")
+        }).json({success : true})
     }catch(err){
         res.status(500).json(err)
         console.log(err)
     }
 }
 const logout = (req, res) => {
-     res.clearCookie("accessToken").redirect('/')
+     res.clearCookie("accessToken").json({success: true})
 }
 
 module.exports = { register, login, logout };
