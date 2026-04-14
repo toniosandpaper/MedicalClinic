@@ -9,7 +9,7 @@ function Employees(list) {
     return (
         <div>
             <AddE />
-            {list.map()}
+            <EmployeeTable list={list}/>
         </div>
     )
 }

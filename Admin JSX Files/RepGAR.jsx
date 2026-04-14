@@ -18,7 +18,7 @@ function RepGAR() {
     const handleClick = async e => {
         e.preventDefault()
         try {
-            await axios.post("/admin/addemp", emp) //Need to figure out how to connect and make post request
+            await axios.post("/admin/addemp", rep) //Need to figure out how to connect and make post request
             navigate("/admin/home") //IDK PLEASE SEND HELP
         }catch(err){
             console.error(err)

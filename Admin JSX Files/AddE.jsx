@@ -33,7 +33,7 @@ const AddE = () => {
         e.preventDefault()
         try {
             await axios.post("/admin/addemp", emp) //Need to figure out how to connect and make post request
-            navigate("/admin/home")
+            navigate("/admin/Employees") //IDK PLEASE SEND HELP
         }catch(err){
             console.error(err)
         }
