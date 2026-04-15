@@ -133,8 +133,8 @@ router.get('/api/getID', async (req,res) => {
 router.get('/api/pulldar', async (req,res) => {
     const q = `
         SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID = E.EmployeeID AND E.DepartmentID = D.DepartmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? AND D.DepartmentName = ? GROUP BY E.EmployeeID ORDER BY Appointments DESC`;
- 
-    const { min, max, DepartmentName } = req.body;
+
+    const { min, max, DepartmentName } = req.query;
  
     try {
  

@@ -37,15 +37,20 @@ function RepDAR() {
 
     const handleClick = async (e) => {
         e.preventDefault();
+        if (!rep.DepartmentName || !rep.min || !rep.max) {
+            alert("Please fill in all fields.");
+            return;
+        }
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:3001/admin/api/pulldar", rep);
+            const params = new URLSearchParams(rep);
+            const response = await fetch(`http://localhost:3001/admin/api/pulldar?${params}`);
             if (!response.ok) {
                 throw new Error("Request failed");
             }
             const resData = await response.json();
             console.log(resData);
-            setData(resData.rows || resData);
+            setData(resData.results);
         } catch (err) {
             console.error(err);
         } finally {
