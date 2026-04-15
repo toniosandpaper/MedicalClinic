@@ -92,17 +92,21 @@ body {
 .form-group select {
   width: 100%;
   padding: 10px;
-
   border: 1px solid black;
   border-radius: 6px;
   font-size: 14px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 30px;
-  margin: 5px;
+  gap: 12px;
+}
+
+.form-grid input {
+  box-sizing: border-box;
 }
 .register-page {
   background-color: #1e2b1b;
