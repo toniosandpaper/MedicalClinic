@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-const API_BASE = '/api/doctor';
+const API_BASE = 'http://localhost:3000/api/doctor';
+
 const styles = {
   page: {
     margin: 0,
@@ -172,11 +173,6 @@ export default function DoctorPage() {
     <div style={styles.page}>
       <div style={styles.navbar}>
         <div><strong>Medical Clinic</strong> — Doctor Dashboard</div>
-        <div style={styles.navLinks}>
-          <a href="/" style={{ color: 'white', textDecoration: 'none' }}>Home</a>
-          <a href="/doctor" style={{ color: 'white', textDecoration: 'none' }}>Doctor</a>
-          <a href="/employee" style={{ color: 'white', textDecoration: 'none' }}>Employee</a>
-        </div>
       </div>
 
       <div style={styles.hero}>
