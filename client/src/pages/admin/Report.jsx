@@ -21,8 +21,7 @@ function Report() {
                     <option value="RepGRR">General Revenue</option>
                 </select>
             </label>
-            
-            {/*{type} <RepDAR /> */}
+            {type}
         </div>
     );
 };

@@ -130,7 +130,35 @@ router.get('/api/getID', async (req,res) => {
     }
 })
 
+router.get('/api/pulldar', async (req,res) => {
+    const q = `
+        SELECT E.EmployeeID, E.FirstName, E.LastName, D.DepartmentName, COUNT(A.AppointmentID) AS Appointments FROM department AS D, appointment AS A, employee as E WHERE A.DoctorID = E.EmployeeID AND E.DepartmentID = D.DepartmentID AND A.AppointmentDate >= ? AND A.AppointmentDate <= ? AND D.DepartmentName = ? GROUP BY E.EmployeeID ORDER BY Appointments DESC`;
+ 
+    const { min, max, DepartmentName } = req.body;
+ 
+    try {
+ 
+        const [rows] = await db.query(q, [min, max, DepartmentName]);
+ 
+        
+        if (rows.length > 0) topE = rows[0].FirstName + " " + rows[0].LastName;
+        if (rows.length > 0) topA = rows[0].Appointments;
+        const [zeros] = await db.query("SELECT E.EmployeeID, E.FirstName, E.LastName FROM doctor AS DO, employee AS E, department AS D WHERE D.DepartmentID=E.DepartmentID AND DO.EmployeeID=E.EmployeeID AND D.DepartmentName=?",req.body.DepartmentName);
+        rows.forEach(tup =>{
+            zeros.forEach(zer => {
+                if (tup.EmployeeID == zer.EmployeeID) {
+                    const index = zeros.indexOf(zer.EmployeeID);
+                    if (index > -1) zeros.splice(index,1);
+                }
+            })
+        });
 
+        res.render('admin/repdar', { results: rows, topE: topA, topA: topA, zeros: zeros });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Report Error");
+    }
+})
 
 /*
 router.get('/profile', async (req, res) => {
