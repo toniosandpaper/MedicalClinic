@@ -49,28 +49,22 @@ const AddE = () => {
     };
     
     const handleClick = async e => {
-        e.preventDefault()
+        e.preventDefault();
         try {
-            await fetch(`/api/addemployee`, emp) //Need to figure out how to connect and make post request
-            console.log("Employee Created")
+            // Correct the fetch syntax for the POST request
+            const response = await fetch(`/api/addemployee`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(emp)
+            });
 
-            if (emp.Role === 'Doctor') {
-                const id = await fetch(`/api/getID`,emp)
-                
-                await fetch(`/api/adddoctor`,{EmployeeID:id,Specialty:emp.Specialty,IsPrimaryCare:emp.IsPrimaryCare})
-                console.log("Doctor Created")
+            if (response.ok) {
+                console.log("Employee Created");
+                // If it's a Doctor, you might need to handle additional inserts here
+                navigate("/admin/employees");
             }
-            else if (emp.Role === 'Nurse') {
-                const id = await fetch(`/api/getID`,emp)
-
-                await fetch(`/api/addnurse`,{EmployeeID:id,AssignedDoctorID:emp.AssignedDoctorID})
-                console.log("Nurse Created")
-            }
-            
-            
-            navigate("/admin/employees") //IDK PLEASE SEND HELP
-        }catch(err){
-            console.error(err)
+        } catch(err){
+            console.error("Add employee error:", err);
         }
     };
 
