@@ -346,8 +346,6 @@ export default function Visits() {
         )
       }
 
-      <a href="/patient/profile" style={styles.backLink}>← Back to profile</a>
-
       {/* Cancel confirmation modal */}
       {cancelTarget && (
         <div style={styles.modal}>

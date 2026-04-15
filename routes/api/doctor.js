@@ -1,8 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db');
+const jwt = require('jsonwebtoken');
+
+const STAFF_SECRET = 'staffsecret';
+
+const getStaff = (req) => {
+  try {
+    const token = req.cookies.staffToken;
+    if (!token) return null;
+    return jwt.verify(token, STAFF_SECRET);
+  } catch {
+    return null;
+  }
+};
 
 router.get('/', async (req, res) => {
+  const staff = getStaff(req);
+  if (!staff) return res.status(401).json({ success: false, error: 'Not logged in' });
+  const doctorId = staff.id;
+
   try {
     const [appointments] = await db.query(`
       SELECT
@@ -23,9 +40,10 @@ router.get('/', async (req, res) => {
       JOIN patient p ON a.PatientID = p.PatientID
       JOIN employee e ON a.DoctorID = e.EmployeeID
       LEFT JOIN appointmentstatus s ON a.StatusCode = s.AppointmentCode
+      WHERE a.DoctorID = ?
       ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC
       LIMIT 25
-    `);
+    `, [doctorId]);
 
     const [visitLogs] = await db.query(`
       SELECT
@@ -44,9 +62,10 @@ router.get('/', async (req, res) => {
       JOIN appointment a ON v.AppointmentID = a.AppointmentID
       JOIN patient p ON a.PatientID = p.PatientID
       JOIN employee e ON a.DoctorID = e.EmployeeID
+      WHERE a.DoctorID = ?
       ORDER BY v.DateTime DESC, v.VisitID DESC
       LIMIT 25
-    `);
+    `, [doctorId]);
 
     const [appointmentOptions] = await db.query(`
       SELECT
@@ -60,9 +79,10 @@ router.get('/', async (req, res) => {
       FROM appointment a
       JOIN patient p ON a.PatientID = p.PatientID
       JOIN employee e ON a.DoctorID = e.EmployeeID
+      WHERE a.DoctorID = ?
       ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC
       LIMIT 50
-    `);
+    `, [doctorId]);
 
     res.json({
       success: true,
@@ -102,9 +122,14 @@ router.post('/visit', async (req, res) => {
       dateTime || new Date()
     ]);
 
+    await db.query(
+      'UPDATE appointment SET StatusCode = 4 WHERE AppointmentID = ?',
+      [appointmentId]
+    );
+
     res.json({
       success: true,
-      message: 'Visit entry added successfully'
+      message: 'Visit entry added and appointment marked as completed'
     });
   } catch (err) {
     console.error(err);

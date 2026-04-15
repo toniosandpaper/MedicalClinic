@@ -82,7 +82,7 @@ export default function Billing() {
         </div>
       </div>
 
-      <a href="/patient/profile" style={styles.backLink}>← Back to profile</a>
+  
     </div>
     </>
   );

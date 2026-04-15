@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 router.get('/session', (req, res) => {
   const staff = getStaff(req);
   if (!staff) return res.json({ isLoggedIn: false });
-  res.json({ isLoggedIn: true, role: staff.role, name: staff.name });
+  res.json({ isLoggedIn: true, id: staff.id, role: staff.role, name: staff.name });
 });
 
 // ── Staff Logout ──────────────────────────────────────────────────────────────
@@ -156,9 +156,12 @@ router.post('/payment', async (req, res) => {
 });
 
 router.post('/availability', async (req, res) => {
-  if (!getStaff(req)) return res.status(401).json({ success: false, error: 'Not logged in' });
+  const staff = getStaff(req);
+  if (!staff) return res.status(401).json({ success: false, error: 'Not logged in' });
   try {
-    const { employeeId, officeId, shiftDate, startTime, endTime } = req.body;
+    const { officeId, shiftDate, startTime, endTime } = req.body;
+    // Use employeeId from body if provided, otherwise fall back to the logged-in staff's own ID
+    const employeeId = req.body.employeeId || staff.id;
     if (!employeeId || !officeId || !shiftDate || !startTime || !endTime) {
       return res.status(400).json({ success: false, error: 'Missing required availability fields' });
     }

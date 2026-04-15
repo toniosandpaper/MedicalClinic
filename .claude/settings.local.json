@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const db = require\\('./db'\\); db.query\\(\\\\\"INSERT INTO appointmentstatus \\(AppointmentCode, AppointmentText\\) VALUES \\(4, 'Completed'\\)\\\\\"\\).then\\(\\(\\) => { console.log\\('done'\\); process.exit\\(\\); }\\).catch\\(e => { console.error\\(e.message\\); process.exit\\(1\\); }\\);\")"
+    ]
+  }
+}

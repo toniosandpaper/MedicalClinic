@@ -311,7 +311,7 @@ export default function Booking() {
         <p style={styles.emptyMsg}>Select a doctor above to see available time slots.</p>
       )}
 
-      <a href="/patient/profile" style={styles.backLink}>← Back to profile</a>
+
     </div>
     </>
   );
