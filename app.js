@@ -21,12 +21,12 @@ app.use(session({
 
 const patientRoutes = require('./routes/patient');
 const homeRoutes = require('./routes/home');
-// const employeeRoutes = require('./routes/employee');
-// const doctorRoutes = require('./routes/doctor');
+const employeeApiRoutes = require('./routes/api/employee');
+const doctorApiRoutes = require('./routes/api/doctor');
 
 app.use('/patient', patientRoutes);
-// app.use('/employee', employeeRoutes);
-// app.use('/doctor', doctorRoutes);
+app.use('/api/employee', employeeApiRoutes);
+app.use('/api/doctor', doctorApiRoutes);
 app.use('/', homeRoutes);
 
 app.get('/logout', (req, res) => {
