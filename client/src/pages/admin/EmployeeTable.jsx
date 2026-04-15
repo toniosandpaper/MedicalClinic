@@ -4,18 +4,17 @@ import {useState,useEffect} from 'react'
 
 function EmployeeTable() {
     const [response,setResponse] = useState([])
-    async function fetchTableData() {
-        setLoading(true)
-        const URL = "/admin/api/getEmployees"
-        setResponse(await fetch(URL))
-    };
+    const [records,setRecords] = useState([])
+    const [loading,setLoading] = useState(false)
 
     useEffect(() => {
-        fetchTableData()
-    });
-    
-    const [records,setRecords] = useState(response)
-    const [loading,setLoading] = useState(false)
+        setLoading(true)
+        fetch("/admin/api/getEmployees", { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => { setResponse(data); setRecords(data); })
+            .catch(err => console.error("Failed to load employees", err))
+            .finally(() => setLoading(false))
+    }, [])
     
     const columns = [
         {

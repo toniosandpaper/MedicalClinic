@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 
@@ -8,20 +8,15 @@ function AdminProfile() {
     const [info, setInfo] = useState(null);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-/*
     useEffect(() => {
-    fetch('/admin/api/profile', { credentials: 'include' })
-        .then(res => {
-        if (res.status === 401) { navigate('/patient/login'); return null; }
-        return res.json();
-        })
-        .then(data => { if (data) setInfo(data); })
-        .catch(() => setError('Failed to load profile.'));
-    }, [navigate]);
-*/
-    useEffect(() => {
-        setInfo(fetch('/admin/api/profile',))
-    })
+        fetch('/admin/api/profile', { credentials: 'include' })
+            .then(res => {
+                if (res.status === 401) { navigate('/admin/home'); return null; }
+                return res.json();
+            })
+            .then(data => { if (data) setInfo(data); })
+            .catch(() => setError('Failed to load profile.'));
+    }, []);
     if (error) return <p style={{ padding: '20px', color: 'red' }}>{error}</p>;
     if (!info) return <p style={{ padding: '20px' }}>Loading...</p>;
     
@@ -33,7 +28,7 @@ function AdminProfile() {
     
     return (
         <div>
-            <button><a href="/admin/home">Home</a></button>
+            <Link to="/admin/home"><button>Home</button></Link>
             <h1> Name: {info.First} {info.Last}</h1>
             <h1>Role: {info.Role}</h1>
             <h1>Department: {info.Depart}</h1>
@@ -79,7 +74,7 @@ function UpdateProfile(info) {
         e.preventDefault()
         try {
             await fetch("/admin/api/updateprofile", updated) //Need to figure out how to connect and make post request
-            navigate("/admin/Employees") //IDK PLEASE SEND HELP
+            navigate("/admin/employees") //IDK PLEASE SEND HELP
         }catch(err){
             console.error(err)
         }
@@ -90,7 +85,7 @@ function UpdateProfile(info) {
         if (passes.OldPassword == info.Pass) {
         try {
             await fetch("/admin/api/updatepassword", {Password:passes.NewPassword,ID:info.id} ) //Need to figure out how to connect and make post request
-            navigate("/admin/Employees") //IDK PLEASE SEND HELP
+            navigate("/admin/employees") //IDK PLEASE SEND HELP
         }catch(err){
             console.error(err)
         }}else {
