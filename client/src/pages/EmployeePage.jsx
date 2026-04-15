@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = '/api/employee';
+const API_BASE = 'http://localhost:3000/api/employee';
 
 const styles = {
   page: {

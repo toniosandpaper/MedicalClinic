@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Andrew's pages
+// Home & auth
 import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
@@ -24,6 +25,7 @@ import ReportTable from './pages/admin/ReportTable';
 import Profile from './pages/patient/Profile';
 import Booking from './pages/patient/booking';
 import Visits from './pages/patient/Visits';
+import Payments from './pages/patient/Payments';
 import Billing from './pages/patient/Billing';
 import BillingBalance from './pages/patient/BillingBalance';
 import BillingMethods from './pages/patient/BillingMethods';
@@ -44,9 +46,11 @@ export default function App() {
         <Route path="/doctor" element={<DoctorPage />} />
 
         {/* Patient portal */}
+        <Route path="/patient/login" element={<Login />} />
         <Route path="/patient/profile" element={<Profile />} />
         <Route path="/patient/booking" element={<Booking />} />
         <Route path="/patient/visits" element={<Visits />} />
+        <Route path="/patient/payments" element={<Payments />} />
         <Route path="/patient/billing" element={<Billing />} />
         <Route path="/patient/billing/balance" element={<BillingBalance />} />
         <Route path="/patient/billing/methods" element={<BillingMethods />} />
