@@ -41,7 +41,7 @@ export default function App() {
         <Route path="/admin/report" element={<Report />} />
         <Route path="/admin/repgar" element={<RepGAR />} />
         <Route path="/admin/repgrr" element={<RepGRR />} />
-        <Route path="/admin/RepDAR" element={<RepDAR />} />
+        <Route path="/admin/repdar" element={<RepDAR />} />
         <Route path="/admin/reporttable" element={<ReportTable />} />
         <Route path="/admin/employees" element={<Employees />} />
         <Route path="/admin/adde" element={<AddE />} />

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+//import { useNavigate } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 
 function RepDAR() {
@@ -35,24 +35,28 @@ function RepDAR() {
         setRep(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleClick = async e => {
-        e.preventDefault()
-        setLoading(true)
+    const handleClick = async (e) => {
+        e.preventDefault();
+        setLoading(true);
         try {
-            const response = await fetch("/admin/api/report/dar", {
+            const response = await fetch("http://localhost:3001/admin/api/pulldar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(rep)
-            })
-            const data = await response.json()
-            setStuff(data)
-            setData(stuff.rows)
+            });
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+            const resData = await response.json();
+            console.log(resData);
+            setData(resData.rows || resData);
         } catch (err) {
-            console.error(err)
+            console.error(err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
+    //console.Errorstuff.Rows
 
     return (
         <>

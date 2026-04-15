@@ -1,6 +1,6 @@
 import React from 'react'
 import {useState} from 'react'
-import {createRoot} from 'react'
+//import {createRoot} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 
@@ -26,8 +26,8 @@ const AddE = () => {
     });
 
     const [check,setCheck] = useState({
-        Doctor:"none",
-        Nurse:"none"
+        Doctor:false,
+        Nurse:false
     })
     
     const handleChange = (e) => {
@@ -40,13 +40,13 @@ const AddE = () => {
             await fetch(`/api/addemployee`, emp) //Need to figure out how to connect and make post request
             console.log("Employee Created")
 
-            if (emp.Role == 'Doctor') {
+            if (emp.Role === 'Doctor') {
                 const id = await fetch(`/api/getID`,emp)
                 
                 await fetch(`/api/adddoctor`,{EmployeeID:id,Specialty:emp.Specialty,IsPrimaryCare:emp.IsPrimaryCare})
                 console.log("Doctor Created")
             }
-            else if (emp.Role == 'Nurse') {
+            else if (emp.Role === 'Nurse') {
                 const id = await fetch(`/api/getID`,emp)
 
                 await fetch(`/api/addnurse`,{EmployeeID:id,AssignedDoctorID:emp.AssignedDoctorID})
@@ -61,15 +61,44 @@ const AddE = () => {
     };
 
     const handleDisplay = (e) => {
-        if (e.target.value == 'Doctor') {
-            setCheck({Doctor: "inline",Nurse: "none"})
-        }else if (e.target.value == 'Nurse') {
-            setCheck({Doctor: "none",Nurse: "inline"})
+        setEmp({Role:e.target.value})
+        if (e.target.value === 'Doctor') {
+            setCheck({Doctor: true,Nurse: false})
+        }else if (e.target.value === 'Nurse') {
+            setCheck({Doctor: false,Nurse: true})
         }else {
-            setCheck({Doctor: "none",Nurse: "none"})
+            setCheck({Doctor: false,Nurse: false})
         }
     }
 
+    function DoctorForm() {
+        return (
+            <div>
+                <br /><br /><br />
+                <label>Specialty:
+                    <input type="text" placeholder="Specialty" name="Specialty" onChange={handleChange} maxlength="20" opacity= {check.Doctor}/>
+                </label>
+                <label>Is A Primary Care Physician:
+                    <select name="IsPrimaryCare" onChange={handleChange}>
+                        <option value="">Select</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </label>
+            </div>
+        )
+    }
+
+    function NurseForm() {
+        return (
+            <div>
+                <br /><br /><br />
+                <label>Assigned Doctor ID:
+                    <input type="text" placeholder="0000" name="AssignedDoctorID" onChange={handleChange}/>
+                </label>
+            </div>
+        )
+    }
     return (
     <div className="form-section">
         <h1>Add New Employee</h1>
@@ -118,7 +147,7 @@ const AddE = () => {
                 </select>
             </label><br /><br />
             <label>Role*:
-                <select name="Role" onChange={handleChange} required>
+                <select name="Role" onChange={handleDisplay}required>
                     <option value="">Select Role</option>
                     <option value="Doctor">Doctor</option>
                     <option value="Nurse">Nurse</option>
@@ -147,30 +176,15 @@ const AddE = () => {
             <label>Password*:
                 <input type="text" placeholder="Password" name="Password" onChange={handleChange} required/>
             </label>
-            <div>
-            <br /><br />If A Doctor:<br />
-            <label>Specialty:
-                <input type="text" placeholder="Specialty" name="Specialty" onChange={handleChange} maxlength="20"/>
-            </label>
-            <label>Is A Primary Care Physician:
-                <select name="IsPrimaryCare" onChange={handleChange}>
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </label>
-            </div>
-            <div>
-            <br /><br />If A Nurse:<br />
-            <label>Assigned Doctor ID:
-                <input type="text" placeholder="0000" name="AssignedDoctorID" onChange={handleChange}/>
-            </label>
-            </div><br />
+            {check.Doctor ? <DoctorForm /> : null}
+            {check.Nurse ? <NurseForm /> : null}
+            <br />
             <button onClick={handleClick}>Create Employee</button>
         </form>
     </div>
     );
 };
+
 
 
 export default AddE;

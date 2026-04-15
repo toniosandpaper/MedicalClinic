@@ -2,8 +2,19 @@ import DataTable from 'react-data-table-component'
 import {useState,useEffect} from 'react'
 
 
-function EmployeeTable(data) {
-    const [records,setRecords] = useState(data)
+function EmployeeTable() {
+    const [response,setResponse] = useState([])
+    async function fetchTableData() {
+        setLoading(true)
+        const URL = "/admin/api/getEmployees"
+        setResponse(await fetch(URL))
+    };
+
+    useEffect(() => {
+        fetchTableData()
+    });
+    
+    const [records,setRecords] = useState(response)
     const [loading,setLoading] = useState(false)
     
     const columns = [
@@ -33,7 +44,7 @@ function EmployeeTable(data) {
             name: "Edit",
             button: true,
             cell: (row) => {
-                <button onClick={editRow(row)}>
+                <button onClick={EditRow(row)}>
                     Edit
                 </button>
             }
@@ -49,32 +60,68 @@ function EmployeeTable(data) {
         }
     ];
 
-    function editRow(row) { //NEED TO IMPLIMENT
-        //Edit(row.id)
+    function EditRow(row) { //NEED TO IMPLIMENT
+        
+        const [editted,setEditted] = useState({
+            FirstName:"",
+            LastName:"",
+            Email:"",
+            PhoneNumber:"",
+            Address:""
+        })
+
+        const handleChange = (e) => {
+            setEditted(prev=>({...prev,[e.target.name]:e.target.value}));
+        }
+
+        const handleClick = async e => {
+            const r = [
+                editted.FirstName,
+                editted.LarstName,
+                editted.Address,
+                editted.PhoneNumber,
+                editted.Email,
+                row.EmployeeID
+            ]
+            await fetch('/admin/api/updateemployee',r)
+        }
+        return (
+            <div>
+                <form>
+                <label>First Name:
+                <input type="text" name="FirstName" onChange={handleChange} maxlength="30" defaultValue={row.FirstName} required/>
+                </label>
+                <label>Last Name:
+                    <input type="text" name="LastName" onChange={handleChange} maxlength="30" defaultValue={row.LastName} required/>
+                </label>
+                <label>Address:
+                <input type="text" name="Address" onChange={handleChange} maxlength="100" defaultValue={row.Address} required/>
+                </label>
+                <label>Phone Number:
+                    <input type="tel" placeholder="1234567890" name="PhoneNumber" onChange={handleChange} pattern="[0-9]{10}" defaultValue={row.PhoneNumber} required/>
+                </label><br />
+                <label>Email*:
+                    <input type="email" placeholder="example@example.com" name="Email" onChange={handleChange} defaultValue={row.Email} required/>
+                </label>
+                <button onClick={handleClick}>Submit</button>
+                </form>
+            </div>
+        )
     };
 
     function DeactivateRow(row) { //NEED TO IMPLIMENT
         //Deactivate(row.id)
     };
-    async function fetchTableData() {
-        setLoading(true)
-        const URL = "//"
-        const response = await fetch(URL)
-    };
-
-    useEffect(() => {
-        fetchTableData()
-    });
 
     function handleFilterF(event) {
-        const newData = data.filter(row => {
+        const newData = response.filter(row => {
             return row.FirstName.toLowerCase().includes(event.target.value.toLowerCase())
         })
         setRecords(newData)
     };
 
     function handleFilterL(event) {
-        const newData = data.filter(row => {
+        const newData = response.filter(row => {
             return row.LastName.toLowerCase().includes(event.target.value.toLowerCase())
         })
         setRecords(newData)

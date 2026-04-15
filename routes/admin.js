@@ -141,25 +141,57 @@ router.get('/api/pulldar', async (req,res) => {
         const [rows] = await db.query(q, [min, max, DepartmentName]);
  
 
-        if (rows.length > 0) topE = rows[0].FirstName + " " + rows[0].LastName;
-        if (rows.length > 0) topA = rows[0].Appointments;
-        const [zeros] = await db.query("SELECT E.EmployeeID, E.FirstName, E.LastName FROM doctor AS DO, employee AS E, department AS D WHERE D.DepartmentID=E.DepartmentID AND DO.EmployeeID=E.EmployeeID AND D.DepartmentName=?",req.body.DepartmentName);
-        rows.forEach(tup =>{
-            zeros.forEach(zer => {
-                if (tup.EmployeeID == zer.EmployeeID) {
-                    const index = zeros.indexOf(zer.EmployeeID);
-                    if (index > -1) zeros.splice(index,1);
-                }
-            })
-        });
+        //const [zeros] = await db.query("SELECT E.EmployeeID, E.FirstName, E.LastName FROM doctor AS DO, employee AS E, department AS D WHERE D.DepartmentID=E.DepartmentID AND DO.EmployeeID=E.EmployeeID AND D.DepartmentName=?",req.body.DepartmentName);
+        // Create a Set of EmployeeIDs from rows for O(1) lookup
+        //const employeeIdsInRows = new Set(rows.map(row => row.EmployeeID));
 
-        res.json({ results: rows, topE: topA, topA: topA, zeros: zeros });
+        // Filter out employees that exist in rows
+        //const filteredZeros = zeros.filter(employee => 
+         //   !employeeIdsInRows.has(employee.EmployeeID));
+
+        return res.json({ results: rows});
     } catch (err) {
         console.error(err);
         res.status(500).send("Report Error");
     }
 })
 
+//router.get('pullgar')
+
+//router.get('pullgrr')
+
+router.get('/api/getEmployees', async (req,res) => {
+    const q = 'SELECT EmployeeID,FirstName,LastName,Email,Address,PhoneNumber FROM employee';
+    
+    try {
+        const [rows] = await db.query(q)
+
+        return res.json(rows)
+    }catch(err) {
+        res.status(500).json({error: "Error getting Employees"})
+    }
+    
+})
+
+router.post('/api/updateEmployee', async (req,res) => {
+    const q = 'UPDATE employee SET FirstName=?,LastName=?,Address=?,PhoneNumber=?,Email=? WHERE EmployeeID=?';
+    const r = [
+                req.body.FirstName,
+                req.body.LarstName,
+                req.body.Address,
+                req.body.PhoneNumber,
+                req.body.Email,
+                req.body.EmployeeID
+            ]
+    try {
+        const [rows] = await db.query(q,r)
+
+        return res.json(rows)
+    }catch(err) {
+        res.status(500).json({error: "Error updating Employee"})
+    }
+    
+})
 /*
 router.get('/profile', async (req, res) => {
     const id = 4; // Keeping his hardcoded ID for now CHANGE WHEN MERGING
