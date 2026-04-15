@@ -113,6 +113,71 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ── Nurse dashboard data ──────────────────────────────────────────────────────
+router.get('/nurse', async (req, res) => {
+  const staff = getStaff(req);
+  if (!staff) return res.status(401).json({ success: false, error: 'Not logged in' });
+  const nurseId = staff.id;
+  try {
+    // Get nurse's assigned doctor
+    const [[nurseRow]] = await db.query(
+      'SELECT n.AssignedDoctorID, e.FirstName AS DoctorFirst, e.LastName AS DoctorLast FROM nurse n JOIN employee e ON n.AssignedDoctorID = e.EmployeeID WHERE n.EmployeeID = ?',
+      [nurseId]
+    );
+
+    const assignedDoctorId = nurseRow ? nurseRow.AssignedDoctorID : null;
+
+    // Appointments for the assigned doctor (or all if none assigned)
+    const apptQuery = assignedDoctorId
+      ? `SELECT a.AppointmentID, a.PatientID, a.DoctorID, a.OfficeID,
+           a.AppointmentDate, a.AppointmentTime, a.ReasonForVisit, a.StatusCode,
+           p.FName AS PatientFirstName, p.LName AS PatientLastName,
+           e.FirstName AS DoctorFirstName, e.LastName AS DoctorLastName,
+           s.AppointmentText AS StatusText
+         FROM appointment a
+         JOIN patient p ON a.PatientID = p.PatientID
+         JOIN employee e ON a.DoctorID = e.EmployeeID
+         LEFT JOIN appointmentstatus s ON a.StatusCode = s.AppointmentCode
+         WHERE a.DoctorID = ?
+         ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC LIMIT 25`
+      : `SELECT a.AppointmentID, a.PatientID, a.DoctorID, a.OfficeID,
+           a.AppointmentDate, a.AppointmentTime, a.ReasonForVisit, a.StatusCode,
+           p.FName AS PatientFirstName, p.LName AS PatientLastName,
+           e.FirstName AS DoctorFirstName, e.LastName AS DoctorLastName,
+           s.AppointmentText AS StatusText
+         FROM appointment a
+         JOIN patient p ON a.PatientID = p.PatientID
+         JOIN employee e ON a.DoctorID = e.EmployeeID
+         LEFT JOIN appointmentstatus s ON a.StatusCode = s.AppointmentCode
+         ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC LIMIT 25`;
+
+    const [appointments] = assignedDoctorId
+      ? await db.query(apptQuery, [assignedDoctorId])
+      : await db.query(apptQuery);
+
+    const [patients] = await db.query('SELECT PatientID, FName AS FirstName, LName AS LastName FROM patient ORDER BY LName, FName');
+    const [doctors] = await db.query('SELECT d.EmployeeID, e.FirstName, e.LastName, d.Specialty FROM doctor d JOIN employee e ON d.EmployeeID = e.EmployeeID ORDER BY e.LastName, e.FirstName');
+    const [paymentMethods] = await db.query('SELECT PaymentCode, PaymentText FROM paymentmethod ORDER BY PaymentCode');
+    const [availability] = await db.query(
+      'SELECT es.ShiftID, es.EmployeeID, e.FirstName, e.LastName, e.Role, es.OfficeID, es.ShiftDate, es.StartTime, es.EndTime FROM employee_shift es JOIN employee e ON es.EmployeeID = e.EmployeeID WHERE es.EmployeeID = ? ORDER BY es.ShiftDate DESC LIMIT 25',
+      [nurseId]
+    );
+
+    res.json({
+      success: true,
+      assignedDoctor: nurseRow || null,
+      appointments,
+      patients,
+      doctors,
+      paymentMethods,
+      availability,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.post('/book', async (req, res) => {
   if (!getStaff(req)) return res.status(401).json({ success: false, error: 'Not logged in' });
   try {

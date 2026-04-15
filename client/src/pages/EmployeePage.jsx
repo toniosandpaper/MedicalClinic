@@ -48,7 +48,8 @@ export default function EmployeePage() {
       .then(s => {
         if (!s.isLoggedIn) navigate('/staff-login');
         else if (s.role === 'Doctor') navigate('/doctor');
-        else if (s.role === 'Admin') navigate('/admin');
+        else if (s.role === 'Nurse')  navigate('/nurse');
+        else if (s.role === 'Admin')  navigate('/admin');
         else { setStaffName(s.name); setStaffRole(s.role); loadData(); }
       })
       .catch(() => navigate('/staff-login'));

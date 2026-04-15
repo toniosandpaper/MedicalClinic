@@ -78,13 +78,10 @@ router.post('/api/updatepassword', async (req,res) => {
 })
 
 router.post('/api/addnurse', async (req,res) => {
-    const q = "INSERT INTO nurse ('EmployeeID','ApprovedDoctorID')VALUES (?,?)";
-
-    const r = [req.body.EmployeeID,req.body.ApprovedDoctorID];
-
+    const q = "INSERT INTO nurse (EmployeeID, AssignedDoctorID) VALUES (?,?)";
+    const r = [req.body.EmployeeID, req.body.AssignedDoctorID];
     try {
         await db.query(q,r)
-
         res.status(200).json({message: "Nurse Created"})
     }catch(err){
         res.status(500).json({error: 'Error inserting nurse'})
@@ -111,24 +108,36 @@ router.post('/api/addemployee', async (req,res) => {
     const r = [
         req.body.FirstName,
         req.body.LastName,
-        req.body.Birthdate,
-        req.body.GenderCode,
-        req.body.RaceCode,
-        req.body.EthnicityCode,
+        req.body.BirthDate || null,
+        req.body.GenderCode || null,
+        req.body.RaceCode || null,
+        req.body.EthnicityCode || null,
         req.body.Role,
-        req.body.Address,
-        req.body.PhoneNumber,
+        req.body.Address || null,
+        req.body.PhoneNumber || null,
         req.body.Email,
         req.body.Password,
-        req.body.DepartmentID,
+        req.body.DepartmentID || null,
     ];
 
     try {
-        await db.query(q,r)
-
-        res.status(200).json({message: 'Employee Created'})
+        const [result] = await db.query(q,r)
+        res.status(200).json({ message: 'Employee Created', employeeId: result.insertId })
     }catch(err){
         res.status(500).json({error: 'Error creating employee'})
+    }
+})
+
+router.get('/api/getdoctors', async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT e.EmployeeID, e.FirstName, e.LastName, d.Specialty
+            FROM doctor d JOIN employee e ON d.EmployeeID = e.EmployeeID
+            ORDER BY e.LastName, e.FirstName
+        `);
+        res.json(rows);
+    } catch(err) {
+        res.status(500).json({ error: 'Error fetching doctors' });
     }
 })
 

@@ -80,7 +80,7 @@ function EditRowForm({ row, onClose, onSave }) {
   )
 }
 
-function EmployeeTable() {
+function EmployeeTable({ refreshKey = 0 }) {
   const [response, setResponse] = useState([])
   const [records, setRecords] = useState([])
   const [loading, setLoading] = useState(false)
@@ -94,7 +94,7 @@ function EmployeeTable() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchTableData() }, [])
+  useEffect(() => { fetchTableData() }, [refreshKey])
 
   const columns = [
     { name: "Employee ID", selector: row => row.EmployeeID, sortable: true },

@@ -38,6 +38,11 @@ export default function StaffNavbar() {
     navigate("/staff-login");
   };
 
+  const homeLink =
+    session.role === "Doctor" ? "/doctor" :
+    session.role === "Nurse"  ? "/nurse"  :
+    session.role === "Admin"  ? "/admin"  : "/employee";
+
   const displayName = session.role === "Doctor"
     ? `Dr. ${session.firstName}`
     : session.firstName || "Staff";
@@ -47,7 +52,7 @@ export default function StaffNavbar() {
       <div className="navbar-main__inner">
 
         {/* Logo */}
-        <Link to="/doctor" className="navbar-main__logo">
+        <Link to={homeLink} className="navbar-main__logo">
           <span className="navbar-main__logo-icon" aria-hidden="true">
             <img src="https://www.svgrepo.com/show/423810/medical-clinic-care.svg" alt="" />
           </span>
