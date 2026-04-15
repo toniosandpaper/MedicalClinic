@@ -2,9 +2,9 @@ import React from 'react'
 import {useState} from 'react'
 import {createRoot} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {RepGAR} from './RepGAR'
-import {RepGRR} from './RepGRR'
-import {RepDAR} from './RepDAR'
+import RepDAR from './RepDAR'
+import RepGAR from './RepGAR'
+import RepGRR from './RepGRR'
 
 function Report() {
     const [type,setType] = useState("RepDAR")
@@ -22,8 +22,10 @@ function Report() {
                 </select>
             </label>
             
-            {/*{type} <RepDAR /> */}
-        </div>
+            {/* Conditionally render the selected report component */}
+            {type === "RepDAR" && <RepDAR />}
+            {type === "RepGAR" && <RepGAR />}
+            {type === "RepGRR" && <RepGRR />}        </div>
     );
 };
 
