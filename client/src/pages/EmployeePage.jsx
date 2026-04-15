@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE = 'http://localhost:3000/api/employee';
 
 const styles = {
   page: {
     margin: 0,
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Poppins, sans-serif',
     background: '#f4f1eb',
     color: '#222',
     minHeight: '100vh'
@@ -94,6 +95,9 @@ const styles = {
 };
 
 export default function EmployeePage() {
+  const navigate = useNavigate();
+  const [staffName, setStaffName] = useState('');
+  const [staffRole, setStaffRole] = useState('');
   const [data, setData] = useState({
     patients: [],
     doctors: [],
@@ -146,8 +150,28 @@ export default function EmployeePage() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    fetch('/api/employee/session', { credentials: 'include' })
+      .then(res => res.json())
+      .then(session => {
+        if (!session.isLoggedIn) {
+          navigate('/staff-login');
+        } else if (session.role === 'Doctor') {
+          navigate('/doctor');
+        } else if (session.role === 'Admin') {
+          navigate('/admin');
+        } else {
+          setStaffName(session.name);
+          setStaffRole(session.role);
+          loadData();
+        }
+      })
+      .catch(() => navigate('/staff-login'));
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await fetch('/api/employee/logout', { credentials: 'include' });
+    navigate('/staff-login');
+  };
 
   const postJson = async (url, payload) => {
     const res = await fetch(url, {
@@ -221,7 +245,13 @@ export default function EmployeePage() {
   return (
     <div style={styles.page}>
       <div style={styles.navbar}>
-        <div><strong>Medical Clinic</strong> — Employee Dashboard</div>
+        <div><strong>Medical Clinic</strong> — {staffRole || 'Employee'} Dashboard</div>
+        <div style={styles.navLinks}>
+          {staffName && <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: '14px' }}>{staffName}</span>}
+          <button onClick={handleLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.4)', color: 'white', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>
+            Log Out
+          </button>
+        </div>
       </div>
 
       <div style={styles.hero}>
