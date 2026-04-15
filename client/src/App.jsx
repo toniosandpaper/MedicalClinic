@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Home & auth
 import Home from './pages/Home';
+import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/patient/Register';
 import RoleSelect from './pages/RoleSelect';
@@ -36,10 +37,11 @@ export default function App() {
       <Routes>
         {/* Home & auth */}
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* David's pages */}
+        {/* Staff pages */}
         <Route path="/employee" element={<EmployeePage />} />
         <Route path="/doctor" element={<DoctorPage />} />
 
@@ -53,7 +55,6 @@ export default function App() {
         <Route path="/patient/billing/balance" element={<BillingBalance />} />
         <Route path="/patient/billing/methods" element={<BillingMethods />} />
         <Route path="/patient/update-profile" element={<UpdateProfile />} />
-        <Route path="/patient-login" element={<Login />} />
         <Route path="/patient/login" element={<Login />} />
         <Route path="/select-role" element={<RoleSelect />} />
         <Route path="/staff-login" element={<StaffLogin />} />
