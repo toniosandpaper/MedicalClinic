@@ -96,12 +96,12 @@ router.get('/api/booked-slots', async (req, res) => {
     try {
         const [rows] = await db.query(
             `SELECT AppointmentDate,
-                CASE WHEN DoctorID = ? THEN 'doctor' ELSE 'patient' END as conflictType
-             FROM appointment
-             WHERE (DoctorID = ? OR PatientID = ?)
-             AND AppointmentDate BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
-             AND StatusCode != 3`,
-            [doctorId, doctorId, patientId, start, end]
+                CASE WHEN PatientID = ? THEN 'patient' ELSE 'doctor' END as conflictType
+            FROM appointment
+            WHERE (DoctorID = ? OR PatientID = ?)
+            AND AppointmentDate BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+            AND StatusCode != 3`,
+            [patientId, doctorId, patientId, start, end]
         );
         res.json(rows);
     } catch (err) {

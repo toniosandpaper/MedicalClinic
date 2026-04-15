@@ -34,18 +34,18 @@ function toLocalDateString(date) {
 const styles = {
   wrap: { padding: '1.5rem', maxWidth: '860px', margin: '0 auto', fontFamily: 'Poppins, sans-serif' },
   heading: { fontSize: '22px', fontWeight: 500, marginBottom: '1.5rem', color: '#1e2b1b' },
-  doctorGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px', marginBottom: '2rem' },
+  doctorGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '2rem' },
   doctorCard: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', border: '1.5px solid #e5e7eb', borderRadius: '10px', cursor: 'pointer', textAlign: 'left', fontFamily: 'Poppins, sans-serif', transition: 'border-color 0.15s, background 0.15s', width: '100%' },
   doctorAvatar: { width: '40px', height: '40px', borderRadius: '50%', background: '#1e2b1b', color: 'white', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   doctorCardInfo: { display: 'flex', flexDirection: 'column', flex: 1 },
   doctorCardName: { fontSize: '14px', fontWeight: 600, color: '#1e2b1b' },
   doctorCardSpecialty: { fontSize: '12px', color: '#6b7280', marginTop: '2px' },
   doctorCardCheck: { fontSize: '16px', color: '#3b6d11', fontWeight: 700, flexShrink: 0 },
-  weekNav: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem' },
+  weekNav: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '1rem', justifyContent: 'center' },
   navBtn: { fontSize: '13px', padding: '6px 14px', borderRadius: '8px', border: '1px solid #d1d5db', background: 'white', color: '#374151', cursor: 'pointer', width: 'auto' },
   navBtnDisabled: { fontSize: '13px', padding: '6px 14px', borderRadius: '8px', border: '1px solid #d1d5db', background: 'white', color: '#374151', cursor: 'not-allowed', opacity: 0.35, width: 'auto' },
   weekLabel: { fontSize: '14px', fontWeight: 500, color: '#111', minWidth: '200px', textAlign: 'center' },
-  legend: { display: 'flex', gap: '20px', marginBottom: '1rem' },
+  legend: { display: 'flex', gap: '20px', marginBottom: '1rem', justifyContent: 'center' },
   legendItem: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#6b7280' },
   dot: { width: '10px', height: '10px', borderRadius: '50%' },
   table: { width: '100%', borderCollapse: 'collapse' },
@@ -62,8 +62,8 @@ const styles = {
   successBar: { background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', color: '#3B6D11', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' },
   errorBar: { background: '#FAECE7', border: '1px solid #F5C4B3', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', color: '#993C1D', marginBottom: '1rem' },
   checkCircle: { width: '18px', height: '18px', borderRadius: '50%', background: '#639922', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'white', fontSize: '11px', fontWeight: 700 },
-  emptyMsg: { color: '#9ca3af', fontStyle: 'italic', fontSize: '14px', padding: '2rem 0' },
-  backLink: { fontSize: '13px', color: '#6b7280', textDecoration: 'none', display: 'inline-block', marginTop: '1rem' },
+  emptyMsg: { color: '#9ca3af', fontStyle: 'italic', fontSize: '14px', padding: '2rem 0', textAlign: 'center' },
+  backLink: { fontSize: '13px', color: '#6b7280', textDecoration: 'none', display: 'block', marginTop: '1rem', textAlign: 'center' },
 };
 
 export default function Booking() {
@@ -224,7 +224,7 @@ export default function Booking() {
       </div>
 
       {selectedDoctor ? (
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <table style={styles.table}>
             <thead>
               <tr>
