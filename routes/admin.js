@@ -2,6 +2,36 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+router.get('/api/profile'), async (req,res) => {
+    const id = 4; //CHANGE WHEN MERGE WORKS
+
+    const q = `
+        SELECT 
+            E.FirstName AS First, 
+            E.LastName AS Last, 
+            E.Birthdate AS Birth, 
+            E.Role, 
+            E.Address, 
+            E.PhoneNumber AS Phone,
+            E.Email,
+            E.Password AS Pass,
+            G.GenderText AS Gender, 
+            R.RaceText AS Race, 
+            ET.EthnicityText AS Ethnic, 
+            D.DepartmentName AS Depart,
+
+        FROM employee E
+        LEFT JOIN gender G ON E.GenderCode = G.GenderCode
+        LEFT JOIN race R ON E.RaceCode = R.RaceCode
+        LEFT JOIN ethnicity ET ON E.EthnicityCode = ET.EthnicityCode
+        LEFT JOIN department D ON E.DepartmentID = D.DepartmentID
+        WHERE E.EmployeeID = ?`;
+
+    try {
+        const [rows] = await db.query(q, [id]);
+        res.json(rows[0]);
+    } catch (err) { res.status(500).json({ error: 'Error loading profile' }); }
+}
 router.get('/profile', async (req, res) => {
     const id = 4; // Keeping his hardcoded ID for now CHANGE WHEN MERGING
     
@@ -30,7 +60,7 @@ router.get('/profile', async (req, res) => {
         
         if (rows.length > 0) {
             // We pass the FIRST row of data to the EJS template
-            res.render('admin/profile', rows[0]); 
+            res.render('admin/Profile', rows[0]); 
         } else {
             res.status(404).send("Employee not found");
         }

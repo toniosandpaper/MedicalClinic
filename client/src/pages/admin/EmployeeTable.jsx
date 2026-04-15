@@ -5,8 +5,7 @@ import {useState,useEffect} from 'react'
 function EmployeeTable(data) {
     const [records,setRecords] = useState(data)
     const [loading,setLoading] = useState(false)
-    const [perPage,setPerPage] = useState(10)
-
+    
     const columns = [
         {
             name: "First Name",

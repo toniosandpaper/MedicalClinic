@@ -4,7 +4,8 @@ import {createRoot} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 function RepDAR() {
-
+    const [stuff,setStuff] = useState([])
+    const [loading,setLoading] = useState(false)
     const [rep,setRep] = useState({
         DepartmentName: "",
         min: "",
@@ -17,15 +18,13 @@ function RepDAR() {
 
     const handleClick = async e => {
         e.preventDefault()
-        try {
-            await axios.post("/admin/addemp", rep) //Need to figure out how to connect and make post request
-            navigate("/admin/home") //IDK PLEASE SEND HELP
-        }catch(err){
-            console.error(err)
-        }
+        await fetch("/admin/addemp", rep).then(res => {
+            setStuff(res.json())
+        })
     };
     
     return (
+        <>
         <div className='report-form'>
             <form>
                 <label>Department: 
@@ -40,7 +39,15 @@ function RepDAR() {
             <button onClick={handleClick}>Generate Report</button>
             </form>
         </div>
-
+        <div className="report-table">
+            <DataTable 
+                title="Report" 
+                columns={columns} 
+                data={data} 
+                progressPending={loading}
+                fixedHeader/>
+        </div>
+        </>
     );
 };
 

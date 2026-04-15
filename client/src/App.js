@@ -24,6 +24,17 @@ export default function App() {
         <Route path="/patient/billing" element={<Billing />} />
         <Route path="/patient/billing/balance" element={<BillingBalance />} />
         <Route path="/patient/billing/methods" element={<BillingMethods />} />
+        <Route path="/admin/home" element={<AdminHome />} />
+        <Route path="/admin/profile" element={<AdminProfile />} />
+        <Route path="/admin/profile/update" element={<AdminUpdateProfile />} />
+        <Route path="/admin/report" element={<Report />} />
+        <Route path="/admin/report/repgar" element={<RepGAR />} />
+        <Route path="/admin/report/grr" element={<RepGRR />} />
+        <Route path="/admin/report/dar" element={<RepDAR />} />
+        <Route path="/admin/report/table" element={<ReportTable />} />
+        <Route path="/admin/employees" element={<Employees />} />
+        <Route path="/admin/employees/adde" element={<AddE />} />
+        <Route path="/admin/employees/table" element={<EmployeeTable />} />
       </Routes>
     </BrowserRouter>
   );
